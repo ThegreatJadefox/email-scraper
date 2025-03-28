@@ -12,7 +12,6 @@ import os
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-
 # Regex for email validation
 EMAIL_REGEX = re.compile(r"[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+")
 
@@ -20,7 +19,7 @@ EMAIL_REGEX = re.compile(r"[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+")
 BLACKLIST_FILE = "blacklist.txt"
 
 def load_blacklist():
-    default_blacklist = {"https://www.myus.com/about/contact/"}
+    default_blacklist = {"https://www.myus.com/about/contact/", "https://mobile.yoox.com/customercare/contact-us"}
     if os.path.exists(BLACKLIST_FILE):
         with open(BLACKLIST_FILE, "r") as f:
             return default_blacklist | set(line.strip() for line in f if line.strip())
