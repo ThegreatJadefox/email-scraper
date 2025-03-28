@@ -62,7 +62,7 @@ def can_scrape(url):
         return False
     return rp.can_fetch("*", url)
 
-def scrape_emails_from_url(url):
+def scrape_emails_from_url(url, domain, location):
     emails = set()
     if url in blacklist:
         st.info(f"Skipping blacklisted URL: {url}")
@@ -71,11 +71,13 @@ def scrape_emails_from_url(url):
         st.info(f"Scraping disallowed by robots.txt for: {url}")
         return emails
     try:
-        response = requests.get(url, timeout=10)
+        response = requests.get(url, timeout=17)
         if response.status_code == 200:
             soup = BeautifulSoup(response.text, "html.parser")
             text = soup.get_text()
             emails = extract_emails_from_text(text)
+            if emails:
+                cache_emails(domain, location, emails)  # Cache emails immediately
     except requests.exceptions.Timeout as e:
         st.warning(f"Timeout fetching {url}: {e}. Adding to blacklist.")
         update_blacklist(url, blacklist)
@@ -101,7 +103,7 @@ def main():
             try:
                 for url in search(final_query, tld="com", lang="en", num=max_urls, stop=max_urls, pause=2):
                     st.write(f"Checking: {url}")
-                    emails = scrape_emails_from_url(url)
+                    emails = scrape_emails_from_url(url, email_domain_filter, country_filter)
                     if emails:
                         found_emails.update(emails)
                     if len(found_emails) >= num_emails_needed:
@@ -109,8 +111,6 @@ def main():
             except Exception as e:
                 st.error(f"An error occurred during the search: {e}")
                 logger.exception(f"Search error: {e}")
-            
-            found_emails = cache_emails(email_domain_filter, country_filter, found_emails)
         
         found_emails = list(found_emails)[:num_emails_needed]
         
