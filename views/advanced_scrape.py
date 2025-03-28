@@ -12,7 +12,6 @@ import os
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-st.write("Loaded Advanced Scrape Page with Blacklist and Filters")
 
 # Regex for email validation
 EMAIL_REGEX = re.compile(r"[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+")
@@ -87,7 +86,7 @@ def scrape_emails_from_url(url, domain, location):
     return emails
 
 def main():
-    st.title("Email Web Scraper - Advanced Version (with Caching)")
+    st.title("Email Web Scraper - Advanced Version")
     
     email_domain_filter = st.text_input("Enter email domain filter (e.g. @gmail.com):", "@gmail.com")
     country_filter = st.text_input("Enter country to filter results (e.g. USA):", "")
