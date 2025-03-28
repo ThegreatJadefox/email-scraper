@@ -33,7 +33,7 @@ pg = st.navigation({
 
 #SHARED ON ALL PAGES
 st.logo("static/2.jpg")
-st.sidebar.text("Made with ❤ by Dapo\n Advanced Email verification features coming soon")
+st.sidebar.text("Made with ❤ by Dapo\n Advanced Email verification features coming soon...")
 
 #RUN NAVIGATION
 pg.run()
