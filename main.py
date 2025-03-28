@@ -5,7 +5,6 @@ about_page = st.Page(
     page = "views/about_me.py",
     title = "About Me",
     icon = "ℹ",
-    default = True
 )
 simple_page = st.Page(
     page = "views/simple_scrape.py",
