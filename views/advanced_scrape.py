@@ -12,7 +12,7 @@ import os
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-st.write("Loaded Advanced Scrape Page with Blacklist and Filters")
+st.write("Loaded Advanced Scrape Page with Blacklist, Filters, and Stop Option")
 
 # Regex for email validation
 EMAIL_REGEX = re.compile(r"[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+")
@@ -90,29 +90,27 @@ def scrape_emails_from_url(url):
     return emails
 
 def main():
-    st.title("Email Web Scraper - Advanced Version (with Persistent Blacklist & Filters)")
+    st.title("Email Web Scraper - Advanced Version (with Stop Option)")
     st.write(
         """
         This tool will:
-        - Perform a Google search based on your query.
-        - Append a country filter to the search (to narrow results by location).
+        - Perform a Google search based on your query (optionally filtered by country).
         - Check the site's robots.txt to ensure scraping is allowed.
         - Skip URLs that are blacklisted.
         - Automatically add URLs that time out to the blacklist.
         - Allow you to manually add URLs to the blacklist.
-        - Scrape the page for emails.
-        - Filter emails by the specified email domain.
+        - Scrape pages for emails and filter them by domain.
+        - Allow you to stop the scraping process and view the emails found so far.
         """
     )
     
-    # Display current blacklist
+    # Sidebar: Display current blacklist and manual update option
     st.sidebar.subheader("Current Blacklisted URLs")
     if blacklist:
         st.sidebar.write("\n".join(sorted(blacklist)))
     else:
         st.sidebar.write("No URLs blacklisted.")
     
-    # Allow user to add URLs to the blacklist manually
     manual_blacklist = st.sidebar.text_area("Add URLs to blacklist (one per line):")
     if st.sidebar.button("Update Blacklist"):
         if manual_blacklist:
@@ -124,7 +122,16 @@ def main():
         else:
             st.sidebar.info("No URLs entered.")
     
-    # Additional filters
+    # Initialize stop flag in session state
+    if "stop_scraping" not in st.session_state:
+        st.session_state["stop_scraping"] = False
+
+    # Stop button (placed in sidebar for easy access)
+    if st.sidebar.button("Stop Scraping"):
+        st.session_state["stop_scraping"] = True
+        st.sidebar.info("Stop flag set. Scraping will halt after the current iteration.")
+
+    # Additional filters: email domain and country filter
     email_domain_filter = st.text_input("Enter email domain filter (e.g. @gmail.com):", "@gmail.com")
     country_filter = st.text_input("Enter country to filter results (e.g. USA):", "")
     
@@ -136,14 +143,24 @@ def main():
     # Modify query with country filter if provided
     final_query = f"{query} {country_filter}" if country_filter.strip() else query
     
+    # Placeholder for live output
+    status_placeholder = st.empty()
+    
     if st.button("Scrape Emails"):
+        # Reset stop flag before starting a new scrape
+        st.session_state["stop_scraping"] = False
         found_emails = set()
-        st.info("Searching and scraping emails... please wait.")
+        status_placeholder.info("Searching and scraping emails... please wait.")
         
         try:
             # 'num' sets how many results per page, 'stop' sets the total number of results to fetch.
             for url in search(final_query, tld="com", lang="en", num=max_urls, stop=max_urls, pause=2):
-                st.write(f"Checking: {url}")
+                # Check if the user has requested to stop scraping
+                if st.session_state.get("stop_scraping", False):
+                    status_placeholder.info("Scraping stopped by user.")
+                    break
+
+                status_placeholder.info(f"Checking: {url}")
                 emails = scrape_emails_from_url(url)
                 if emails:
                     found_emails.update(emails)
@@ -157,7 +174,7 @@ def main():
         if email_domain_filter.strip():
             found_emails = {email for email in found_emails if email.endswith(email_domain_filter)}
         
-        # Limit emails to the user requested number
+        # Limit emails to the user-requested number
         found_emails = list(found_emails)[:num_emails_needed]
         
         if found_emails:
@@ -168,4 +185,3 @@ def main():
 
 # Run main unconditionally so that it executes when imported
 main()
-
