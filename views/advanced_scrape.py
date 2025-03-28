@@ -71,18 +71,19 @@ def scrape_emails_from_url(url, domain, location):
         st.info(f"Scraping disallowed by robots.txt for: {url}")
         return emails
     try:
-        response = requests.get(url, timeout=17)
+        response = requests.get(url, timeout=18)
         if response.status_code == 200:
             soup = BeautifulSoup(response.text, "html.parser")
             text = soup.get_text()
             emails = extract_emails_from_text(text)
             if emails:
-                cache_emails(domain, location, emails)  # Cache emails immediately
+                cache_emails(domain, location, emails)
     except requests.exceptions.Timeout as e:
         st.warning(f"Timeout fetching {url}: {e}. Adding to blacklist.")
         update_blacklist(url, blacklist)
     except Exception as e:
-        st.warning(f"Error fetching {url}: {e}")
+        st.warning(f"Error fetching {url}: {e}. Adding to blacklist.")
+        update_blacklist(url, blacklist)
     return emails
 
 def main():
