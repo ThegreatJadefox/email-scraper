@@ -22,6 +22,7 @@ tutorial_page = st.Page(
     page = "views/tutorial.py",
     title = "TUTORIAL(READ FIRST)",
     icon = "👨‍🏫",
+    default = True
 )
 
 chat_page = st.Page(
