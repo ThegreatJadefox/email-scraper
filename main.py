@@ -32,7 +32,7 @@ pg = st.navigation({
 })
 
 #SHARED ON ALL PAGES
-st.logo("assets/site_logo.png")
+st.logo("static/2.jpg")
 st.sidebar.text("Made with ❤ by Dapo\n Advanced Email verification features coming soon")
 
 #RUN NAVIGATION
