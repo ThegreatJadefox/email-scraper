@@ -32,8 +32,13 @@ The **Advanced Scraper** works similarly to the Simple Scraper but first checks 
 - The tool would check if url is in blacklist
 - The tool will indicate whether scraping is allowed for each URL.
 - If allowed, it will scrape and display the emails.
-- If a URL doesn't respond and is delaying program execution, you can blacklist it.
+- If a URL doesn't respond and is delaying program execution, the code automatically blacklists it.
   
 This is recommended when you need to be extra cautious and follow best practices regarding website scraping.
 """)
 
+
+st.markdown("""
+
+- Note that some URL's may take a long time to respond, that's a problem on their end not from the app
+""")
