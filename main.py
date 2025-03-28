@@ -24,10 +24,16 @@ tutorial_page = st.Page(
     icon = "👨‍🏫",
 )
 
+chat_page = st.Page(
+    page = "views/chatbot.py",
+    title = "Bot",
+    icon = "🤖",
+)
+
 
 #NAVIGATION WITH SECTIONS
 pg = st.navigation({
-    "ABOUT": [about_page, tutorial_page],
+    "INFO": [about_page, tutorial_page, chat_page],
     "SCRAPING": [simple_page, advanced_page],
 })
 
