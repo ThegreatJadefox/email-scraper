@@ -12,6 +12,7 @@ import os
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+st.write("Loaded Advanced Scrape Page with Blacklist and Filters")
 
 # Regex for email validation
 EMAIL_REGEX = re.compile(r"[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+")
@@ -89,16 +90,18 @@ def scrape_emails_from_url(url):
     return emails
 
 def main():
-    st.title("Email Web Scraper - Advanced Version (with Blacklist)")
+    st.title("Email Web Scraper - Advanced Version (with Persistent Blacklist & Filters)")
     st.write(
         """
         This tool will:
         - Perform a Google search based on your query.
+        - Append a country filter to the search (to narrow results by location).
         - Check the site's robots.txt to ensure scraping is allowed.
         - Skip URLs that are blacklisted.
         - Automatically add URLs that time out to the blacklist.
         - Allow you to manually add URLs to the blacklist.
-        - Scrape the page for emails and display them.
+        - Scrape the page for emails.
+        - Filter emails by the specified email domain.
         """
     )
     
@@ -120,11 +123,18 @@ def main():
             st.sidebar.success("Blacklist updated!")
         else:
             st.sidebar.info("No URLs entered.")
-
+    
+    # Additional filters
+    email_domain_filter = st.text_input("Enter email domain filter (e.g. @gmail.com):", "@gmail.com")
+    country_filter = st.text_input("Enter country to filter results (e.g. USA):", "")
+    
     # User inputs for scraping
     query = st.text_input("Enter your search query:", "contact email")
     num_emails_needed = st.number_input("How many emails do you need?", min_value=1, value=10, step=1)
     max_urls = st.number_input("Maximum number of URLs to scrape:", min_value=1, value=20, step=1)
+    
+    # Modify query with country filter if provided
+    final_query = f"{query} {country_filter}" if country_filter.strip() else query
     
     if st.button("Scrape Emails"):
         found_emails = set()
@@ -132,7 +142,7 @@ def main():
         
         try:
             # 'num' sets how many results per page, 'stop' sets the total number of results to fetch.
-            for url in search(query, tld="com", lang="en", num=max_urls, stop=max_urls, pause=2):
+            for url in search(final_query, tld="com", lang="en", num=max_urls, stop=max_urls, pause=2):
                 st.write(f"Checking: {url}")
                 emails = scrape_emails_from_url(url)
                 if emails:
@@ -142,6 +152,10 @@ def main():
         except Exception as e:
             st.error(f"An error occurred during the search: {e}")
             logger.exception(f"Search error: {e}")
+        
+        # Filter emails by domain if specified
+        if email_domain_filter.strip():
+            found_emails = {email for email in found_emails if email.endswith(email_domain_filter)}
         
         # Limit emails to the user requested number
         found_emails = list(found_emails)[:num_emails_needed]
@@ -154,3 +168,4 @@ def main():
 
 # Run main unconditionally so that it executes when imported
 main()
+
