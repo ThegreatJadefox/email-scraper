@@ -35,8 +35,9 @@ The **Advanced Scraper** works similarly to the Simple Scraper but first checks 
 - The domain name query currently only responds to @gmail.com.   
 This is recommended when you need to be extra cautious and follow best practices regarding website scraping.
 """)
+st.divider()
 
-
+st.markdown("General Info")
 st.markdown("""
 - The code automatically removes any duplicate emails so you may get less than the amount of emails you requested for.
 - Make sure that the number of URL's is close to or more than two times the number of emails you need to ensure that you get close to that amount.
