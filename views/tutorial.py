@@ -7,6 +7,7 @@ Welcome to the Email Web Scraper Tutorial!
 This guide will walk you through how to use our two web scraping tools:
 - **Simple Scraper**: Quickly scrapes web pages for email addresses using basic regex matching.
 - **Advanced Scraper**: Checks the site's `robots.txt` file to respect crawling rules, then scrapes for emails if allowed.
+- The code automatically removes any duplicate emails so you may get less than the amount of emails you requested for.
 
 """)
 
