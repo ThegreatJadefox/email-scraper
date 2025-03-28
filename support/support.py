@@ -12,9 +12,9 @@ def support_me():
         st.write("1510983546\n\nAkintola Oladapo Julius\n")
     with col3:
         st.subheader("Crypto Transfer")
-        st.write("BTC wallet address\n1Dcpo8oWa6QwA5wVYER4UbWZh4zKWE3C85")
+        st.write("BTC wallet address:\n1Dcpo8oWa6QwA5wVYER4UbWZh4zKWE3C85")
     with col4:
         st.subheader("USDT")
-        st.write("USDT\n TRC20\nTSgoS6vPmfbtTzL7VAxSmr5ZShYHS3Rveq")
+        st.write("USDT\n\nTRC20\n\nTSgoS6vPmfbtTzL7VAxSmr5ZShYHS3Rveq")
 
     st.write("Email verification features coming soon ...")
