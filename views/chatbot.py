@@ -1,3 +1,5 @@
 import streamlit as st
+import time
 
-st.header("COMING SOON")
+time.sleep(2)
+st.header("COMING SOON...")
