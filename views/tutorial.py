@@ -29,8 +29,10 @@ st.markdown("""
 The **Advanced Scraper** works similarly to the Simple Scraper but first checks the site's `robots.txt` file. This ensures that the scraper respects the site owner's rules before extracting any emails.  
 **How to use it:**
 - Follow similar steps as the Simple Scraper.
+- The tool would check if url is in blacklist
 - The tool will indicate whether scraping is allowed for each URL.
 - If allowed, it will scrape and display the emails.
+- If a URL doesn't respond and is delaying program execution, you can blacklist it.
   
 This is recommended when you need to be extra cautious and follow best practices regarding website scraping.
 """)
