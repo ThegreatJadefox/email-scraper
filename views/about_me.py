@@ -23,8 +23,10 @@ with col2:
         "Intermediate Python Programmer from Nigeria, Currently self-learning python programming in hopes of one day becoming a mega business owner in the field."
     )
 
-    if st.button("🤝Support Me"):
+    if st.button("✉ Contact Me"):
         show_contact_form()
+    if st.button("🤝Support Me"):
+        show_support_form()
 
 #SKILLS
 st.write("\n")
