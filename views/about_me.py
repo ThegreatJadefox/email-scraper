@@ -1,9 +1,15 @@
 import streamlit as st
 from support.support import support_me
+from support.contact import contact_me
 
 
-@st.dialog("Support Me")
+
+@st.dialog("Contact Me")
 def  show_contact_form():
+    contact_me()
+    
+@st.dialog("Support Me")
+def  show_support_form():
     support_me()
 
 
