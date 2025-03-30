@@ -19,7 +19,7 @@ EMAIL_REGEX = re.compile(r"[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+")
 BLACKLIST_FILE = "blacklist.txt"
 
 def load_blacklist():
-    default_blacklist = {"https://www.myus.com/about/contact/", "https://mobile.yoox.com/customercare/contact-us", "https://www.myus.com", "https://www.ups.com/upsemail/input?loc=en_US", "https://www.bestbuy.com/contact-us"}
+    default_blacklist = {"https://www.myus.com/about/contact/", "https://mobile.yoox.com/customercare/contact-us", "https://www.myus.com", "https://www.ups.com/upsemail/input?loc=en_US", "https://www.bestbuy.com/contact-us", "https://www2.hm.com/en_us/customer-service/contact.html"}
     if os.path.exists(BLACKLIST_FILE):
         with open(BLACKLIST_FILE, "r") as f:
             return default_blacklist | set(line.strip() for line in f if line.strip())
@@ -36,24 +36,17 @@ def update_blacklist(url, blacklist):
 blacklist = load_blacklist()
 
 @st.cache_data
-def get_cached_emails(domain, location, email_type):
+def get_cached_emails(domain, location):
     return set()
 
 @st.cache_data
-def cache_emails(domain, location, email_type, emails):
-    cached_emails = get_cached_emails(domain, location, email_type)
+def cache_emails(domain, location, emails):
+    cached_emails = get_cached_emails(domain, location)
     cached_emails.update(emails)
     return cached_emails
 
-def extract_emails_from_text(text, domain_filter, email_type):
-    emails = set(match.group() for match in EMAIL_REGEX.finditer(text) if domain_filter in match.group())
-    if email_type == "Customer Emails":
-        return {email for email in emails if "customer" in email or "support" in email}
-    elif email_type == "Store Emails":
-        return {email for email in emails if "store" in email or "shop" in email}
-    elif email_type == "Company Emails":
-        return {email for email in emails if "company" in email or "corp" in email or "business" in email}
-    return emails
+def extract_emails_from_text(text):
+    return set(match.group() for match in EMAIL_REGEX.finditer(text))
 
 def can_scrape(url):
     parsed = urlparse(url)
@@ -68,7 +61,7 @@ def can_scrape(url):
         return False
     return rp.can_fetch("*", url)
 
-def scrape_emails_from_url(url, domain, location, email_type):
+def scrape_emails_from_url(url, domain, location):
     emails = set()
     if url in blacklist:
         st.info(f"Skipping blacklisted URL: {url}")
@@ -81,10 +74,9 @@ def scrape_emails_from_url(url, domain, location, email_type):
         if response.status_code == 200:
             soup = BeautifulSoup(response.text, "html.parser")
             text = soup.get_text()
-            if location.lower() in text.lower():  # Check if country filter is in the text
-                emails = extract_emails_from_text(text, domain, email_type)
-                if emails:
-                    cache_emails(domain, location, email_type, emails)
+            emails = extract_emails_from_text(text)
+            if emails:
+                cache_emails(domain, location, emails)
     except requests.exceptions.Timeout as e:
         st.warning(f"Timeout fetching {url}: {e}. Adding to blacklist.")
         update_blacklist(url, blacklist)
@@ -99,20 +91,19 @@ def main():
     email_domain_filter = st.text_input("Enter email domain filter (e.g. @gmail.com):", "@gmail.com")
     country_filter = st.text_input("Enter country to filter results (e.g. USA):", "USA")
     query = st.text_input("Enter your search query:", "contact email")
-    email_type = st.selectbox("Select the type of emails you want to see:", ["All Emails", "Customer Emails", "Store Emails", "Company Emails"])
     num_emails_needed = st.number_input("How many emails do you need?", min_value=1, value=10, step=1)
     max_urls = st.number_input("Maximum number of URLs to scrape:", min_value=1, value=20, step=1)
     
     final_query = f"{query} {country_filter}" if country_filter.strip() else query
     
     if st.button("Scrape Emails"):
-        found_emails = get_cached_emails(email_domain_filter, country_filter, email_type)
+        found_emails = get_cached_emails(email_domain_filter, country_filter)
         
         if len(found_emails) < num_emails_needed:
             try:
                 for url in search(final_query, tld="com", lang="en", num=max_urls, stop=max_urls, pause=2):
                     st.write(f"Checking: {url}")
-                    emails = scrape_emails_from_url(url, email_domain_filter, country_filter, email_type)
+                    emails = scrape_emails_from_url(url, email_domain_filter, country_filter)
                     if emails:
                         found_emails.update(emails)
                     if len(found_emails) >= num_emails_needed:
