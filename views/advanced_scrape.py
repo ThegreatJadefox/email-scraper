@@ -19,7 +19,7 @@ EMAIL_REGEX = re.compile(r"[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+")
 BLACKLIST_FILE = "blacklist.txt"
 
 def load_blacklist():
-    default_blacklist = {"https://www.myus.com/about/contact/", "https://mobile.yoox.com/customercare/contact-us"}
+    default_blacklist = {"https://www.myus.com/about/contact/", "https://mobile.yoox.com/customercare/contact-us", "https://www.ups.com/upsemail/input?loc=en_US"}
     if os.path.exists(BLACKLIST_FILE):
         with open(BLACKLIST_FILE, "r") as f:
             return default_blacklist | set(line.strip() for line in f if line.strip())
