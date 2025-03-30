@@ -1,6 +1,6 @@
 import streamlit as st
 import re
-import json
+import requests
 
 def is_valid_email(email):
     """Validate email using regex."""
@@ -15,30 +15,39 @@ def contact_me():
         email = st.text_input("Email Address")
         message = st.text_area("Your Message")
         submit_button = st.form_submit_button("Submit")
-
+    
         if submit_button:
             if not name:
                 st.error("Please provide your name. 😩")
                 st.stop()
-
+    
             if not email:
                 st.error("Please provide your email. 📧")
                 st.stop()
-
+    
             if not message:
                 st.error("Please provide a message. 💬")
                 st.stop()
-
+    
             if not is_valid_email(email):
                 st.error("Please provide a valid email address. 📧")
                 st.stop()
-
-            # Save data to a JSON file
-            data = {"name": name, "email": email, "message": message}
+    
+            # Prepare the review data
+            review_data = {
+                "name": name,
+                "email": email,
+                "message": message,
+            }
+    
+            # Send the review to the viewer app's API endpoint
             try:
-                with open("customer_review.json", "a") as c:
-                    json.dump(data, c, indent=4)
-                    c.write("\n")  # Add newline for readability
-                st.success("Your message has been submitted successfully! ✅")
+                response = requests.post("http://localhost:5001/api/reviews", json=review_data)
+                if response.status_code == 200:
+                    st.success("Your review was sent successfully!")
+                else:
+                    st.error("Failed to send review to the viewer app.")
             except Exception as e:
-                st.error(f"Error saving data: {e}")
+                st.error(f"Error sending review: {e}")
+
+
