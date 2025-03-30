@@ -40,15 +40,13 @@ def contact_me():
                 "message": message,
             }
     
-            # Send the review to the viewer app's API endpoint
+            # Send the review to the viewer app's API endpoint (deployed URL)
             try:
-                response = requests.post("https://scraperreviews.streamlit.app", json=review_data)
+                response = requests.post("https://scraperreviews.streamlit.app/api/reviews", json=review_data)
                 if response.status_code == 200:
                     st.success("Your review was sent successfully!")
-                    st.balloons()
                 else:
                     st.error("Failed to send review to the viewer app.")
             except Exception as e:
                 st.error(f"Error sending review: {e}")
-
 
