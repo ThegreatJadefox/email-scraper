@@ -19,7 +19,7 @@ EMAIL_REGEX = re.compile(r"[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+")
 BLACKLIST_FILE = "blacklist.txt"
 
 def load_blacklist():
-    default_blacklist = {"https://www.myus.com/about/contact/", "https://mobile.yoox.com/customercare/contact-us", "https://www.ups.com/upsemail/input?loc=en_US"}
+    default_blacklist = {"https://www.myus.com/about/contact/", "https://mobile.yoox.com/customercare/contact-us"}
     if os.path.exists(BLACKLIST_FILE):
         with open(BLACKLIST_FILE, "r") as f:
             return default_blacklist | set(line.strip() for line in f if line.strip())
@@ -45,11 +45,8 @@ def cache_emails(domain, location, emails):
     cached_emails.update(emails)
     return cached_emails
 
-def extract_emails_from_text(text, domain_filter=None):
-    emails = set(match.group() for match in EMAIL_REGEX.finditer(text))
-    if domain_filter:
-        emails = {email for email in emails if email.endswith(domain_filter)}
-    return emails
+def extract_emails_from_text(text):
+    return set(match.group() for match in EMAIL_REGEX.finditer(text))
 
 def can_scrape(url):
     parsed = urlparse(url)
@@ -77,7 +74,7 @@ def scrape_emails_from_url(url, domain, location):
         if response.status_code == 200:
             soup = BeautifulSoup(response.text, "html.parser")
             text = soup.get_text()
-            emails = extract_emails_from_text(text, domain)
+            emails = extract_emails_from_text(text)
             if emails:
                 cache_emails(domain, location, emails)
     except requests.exceptions.Timeout as e:
@@ -97,8 +94,7 @@ def main():
     num_emails_needed = st.number_input("How many emails do you need?", min_value=1, value=10, step=1)
     max_urls = st.number_input("Maximum number of URLs to scrape:", min_value=1, value=20, step=1)
     
-    # Refine query for better search results
-    final_query = f"contact email {query} {country_filter} site:{email_domain_filter}" if country_filter.strip() else f"contact email {query} site:{email_domain_filter}"
+    final_query = f"{query} {country_filter}" if country_filter.strip() else query
     
     if st.button("Scrape Emails"):
         found_emails = get_cached_emails(email_domain_filter, country_filter)
@@ -123,4 +119,5 @@ def main():
             st.text_area("Emails (copy them below):", value="\n".join(found_emails), height=200)
         else:
             st.info("No emails found. Try a different query or adjust parameters.")
+
 main()
