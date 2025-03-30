@@ -23,7 +23,7 @@ def contact_me():
                 try:
                     with open("reviews.json", "a") as f:
                         json.dump(review, f, indent=4)
-                        st.write("EEVIEW SENT SUCCESSFULLY")
+                        st.write("REVIEW SENT SUCCESSFULLY")
                 except Exception as e:
                     st.write("ERROR, REVIEW UNABLE TO SEND")
                     
