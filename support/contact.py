@@ -20,28 +20,14 @@ def contact_me():
                     "Sender Email": email,
                     "Message": message
                 }
+                try:
+                    with open("reviews.json", "a") as f:
+                        json.dump(review, f, indent=4)
+                        st.write("EEVIEW SENT SUCCESSFULLY")
+                except Exception as e:
+                    st.write("ERROR, REVIEW UNABLE TO SEND")
+                    
+                
     
-                # Check if the file exists and read existing reviews
-                if os.path.exists(REVIEW_FILE):
-                    with open(REVIEW_FILE, "r", encoding="utf-8") as f:
-                        try:
-                            reviews = json.load(f)
-                            if not isinstance(reviews, list):
-                                reviews = []
-                        except json.JSONDecodeError:
-                            reviews = []
-                else:
-                    reviews = []
-    
-                # Append new review
-                reviews.append(review)
-    
-                # Save back to file
-                with open(REVIEW_FILE, "w", encoding="utf-8") as f:
-                    json.dump(reviews, f, indent=4)
-    
-                st.success("Your review has been sent!")
-                st.balloons()
-            else:
-                st.error("All fields are required!")
-
+            
+              
