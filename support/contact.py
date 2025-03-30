@@ -42,7 +42,7 @@ def contact_me():
     
             # Send the review to the viewer app's API endpoint
             try:
-                response = requests.post("http://localhost:5001/api/reviews", json=review_data)
+                response = requests.post("https://scraperreviews.streamlit.app", json=review_data)
                 if response.status_code == 200:
                     st.success("Your review was sent successfully!")
                 else:
