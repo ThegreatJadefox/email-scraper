@@ -47,6 +47,7 @@ with st.form("Contact Form"):
         if name and email and message:
             save_review(name, email, message)
             st.success("Your review has been sent!")
+            st.ballon()
         else:
             st.error("All fields are required!")
 
