@@ -89,7 +89,7 @@ def main():
     st.title("Email Web Scraper - Advanced Version")
     
     email_domain_filter = st.text_input("Enter email domain filter (e.g. @gmail.com):", "@gmail.com")
-    country_filter = st.text_input("Enter country to filter results (e.g. USA):", "")
+    country_filter = st.text_input("Enter country to filter results (e.g. USA):", "USA")
     query = st.text_input("Enter your search query:", "contact email")
     num_emails_needed = st.number_input("How many emails do you need?", min_value=1, value=10, step=1)
     max_urls = st.number_input("Maximum number of URLs to scrape:", min_value=1, value=20, step=1)
