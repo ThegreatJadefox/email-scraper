@@ -3,7 +3,7 @@ import json
 import os
 
 # File to store reviews
-REVIEW_FILE = "customer_review.json"
+REVIEW_FILE = "reviews/customer_review.json"
 
 # Streamlit UI
 st.title("Contact Us")
