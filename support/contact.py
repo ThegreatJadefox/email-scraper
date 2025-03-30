@@ -42,6 +42,3 @@ def contact_form():
                 st.success("Your message has been submitted successfully! ✅")
             except Exception as e:
                 st.error(f"Error saving data: {e}")
-
-
-    contact_form()
