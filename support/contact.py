@@ -45,6 +45,7 @@ def contact_me():
                 response = requests.post("https://scraperreviews.streamlit.app", json=review_data)
                 if response.status_code == 200:
                     st.success("Your review was sent successfully!")
+                    st.balloons()
                 else:
                     st.error("Failed to send review to the viewer app.")
             except Exception as e:
